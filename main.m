@@ -121,7 +121,7 @@ function svmtrain_Callback(hObject, eventdata, handles)
 global V
 global model
 global train_label
-[train_faceContainer,train_label] = ReadFace(41,0);
+[train_faceContainer,train_label] = ReadFace(40,0);
 [pcaA,V]=fastPCA(train_faceContainer,20);
 [scaledface] = scaling( pcaA,-1,1 );
 model = svmtrain(train_label,scaledface,'-t 0 ');
