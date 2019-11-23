@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 18-Nov-2019 21:17:13
+% Last Modified by GUIDE v2.5 24-Nov-2019 01:34:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -122,8 +122,8 @@ global V
 global model
 global train_label
 [train_faceContainer,train_label] = ReadFace(40,0);
-[pcaA,V]=fastPCA(train_faceContainer,20);
-[scaledface] = scaling( pcaA,-1,1 );
+[pcaA,V]=fastPCA(train_faceContainer,33);
+[scaledface] = trainscaling( pcaA,-1,1 );
 model = svmtrain(train_label,scaledface,'-t 0 ');
 
 
@@ -155,9 +155,28 @@ facepath = [pathname, filename];
 
 load 'ORL/PCA.mat'
 testData = (test_faceContainer - meanVec) * V;
-scaled_testData = testscaling( testData,-1,1);
+scaled_testData = scaling( testData,-1,1);
 
 im = imread(facepath);
 axes( handles.axes1);
 imshow(im);
+
+
+% --- Executes on button press in accuracy.
+function accuracy_Callback(hObject, eventdata, handles)
+% hObject    handle to accuracy (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global model
+[test_faceContainer,test_label]=ReadFace(40, 1);
+load 'ORL/PCA.mat'
+testData = (test_faceContainer - meanVec) * V;
+scaled_testData2 = testscaling(testData,-1,1);
+[predict_label,accuracy,prob_estimates]=svmpredict(test_label, scaled_testData2, model);
+result = accuracy(1);
+result = strcat( num2str(result), '%');
+h = msgbox(['Classifier accuracy:   ', result]);
+set(h,'resize','on')
+
+
 
